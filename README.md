@@ -9,6 +9,7 @@ Prisma is a database toolkit that makes it easy to query, migrate and model your
 
 - [Installation](#installation)
   - [Initialize Prisma](#initialize-prisma)
+- [Install Postgres](#install-postgres)
 - [Setup a Database](#setup-a-database)
   - [\*Prisma VS Code Extension](#prisma-vs-code-extension)
 - [Define your Database Schema](#define-your-database-schema)
@@ -61,7 +62,7 @@ npm i -D prisma typescript ts-node @types/node nodemon
 npm i @prisma/studio
 ```
 
-### Initialize Prisma
+### OPTIONAL: Initialize Prisma
 
 - this will create a `prisma` folder with a `schema.prisma` file
 
@@ -71,9 +72,39 @@ npx prisma init --datasource-provider postgresql
 
 > _--datasource-provider is optional and will default to `postgresql`_
 
+## Install Postgres
+
+- Follow tutorial: https://www.youtube.com/watch?v=wTqosS71Dc4
+
+- Download Postgres.app: https://postgresapp.com
+
+- Follow the three steps instructions. Remember to configur your `$PATH` on step #3:
+`sudo mkdir -p /etc/paths.d &&
+echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/paths.d/postgresapp`
+
 ## Setup a Database
 
-- Setup any database you want to use with Prisma and get the connection string
+- Update datasource URL in `schema.prisma` file:
+
+```
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+```
+
+- Add `.env`
+```
+DATABASE_URL="postgres://willdiep@localhost:5432/willdiep"
+```
+
+- Create and seed the database:
+
+```
+npx prisma migrate dev --name init
+```
+
+#### Or, set up an external database that you want to use with Prisma and get the connection string:
 
 > Note: I've created a new database with [Supabase](https://supabase.com/) which is a firebase-like database service that uses PostgreSQL
 >
@@ -87,7 +118,7 @@ npx prisma init --datasource-provider postgresql
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=SCHEMA"
 ```
 
-#### IF you already have data in your database
+#### If you already have data in your database
 
 - run `npx db pull` if you already have data in your database and you want to generate the Prisma schema
 
@@ -124,10 +155,8 @@ name String
 > **Remember to run this command after any changes to your schema**
 
 ```bash
-npx prisma migrate dev
+npx prisma migrate dev --name init
 ```
-
-> if prisma complains, run this command: `npx prisma migrate dev --name init`
 
 ## Run Prisma Studio
 
